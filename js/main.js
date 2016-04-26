@@ -10,7 +10,12 @@ var PPParser = function() {
 
 PPParser.prototype.init = function() {
   this.container = document.getElementById('log_' + this.id);
-  this.logPath = this.container.querySelector('.logPath');
+  this.logFile = this.container.querySelector('.logFile');
+  this.logFile.addEventListener('change', function(evt) {
+    var file = evt.target.files[0];
+    // TODO file size check
+    console.log(file.size);
+  });
   this.submitBtn = this.container.querySelector('.submitBtn');
   this.submitBtn.addEventListener('click', this.readLog.bind(this));
   this.verboseCheck = this.container.querySelector('.verbose');
@@ -18,21 +23,17 @@ PPParser.prototype.init = function() {
   this.resultArea = this.container.querySelector('.result');
 };
 
-PPParser.prototype.readLog = function() {
-  var path = this.logPath.value;
-  this.verbose = this.verboseCheck.checked;
-  var httpRequest = new XMLHttpRequest();
-  httpRequest.onreadystatechange = (function() {
-    if (httpRequest.readyState === XMLHttpRequest.DONE) {
-      if (httpRequest.status === 200) {
-        this.handleLog(httpRequest.responseText);
-      } else {
-        alert('There was a problem with the request.');
-      }
-    }
+PPParser.prototype.readLog = function(evt) {
+  // clean previous result
+  this.interfaceArea.innerHTML = '';
+  this.interfaces = [];
+  this.resultArea.innerHTML = '';
+  var file = this.logFile.files[0];
+  var reader = new FileReader();
+  reader.onload = (function(evt) {
+    this.handleLog(evt.target.result);
   }).bind(this);
-  httpRequest.open('GET', path);
-  httpRequest.send();
+  reader.readAsText(file);
 }
 
 PPParser.prototype.handleLog = function(text) {
@@ -67,11 +68,16 @@ PPParser.prototype.handleLog = function(text) {
       }
       msg = line.substring(line.indexOf('{'), line.lastIndexOf('}')+1);
       // record its interface
-      var json = JSON.parse(msg);
-      if (!this.interfaces.includes(json['__interface'])) {
-        this.interfaces.push(json['__interface']);
+      try {
+        var json = JSON.parse(msg);
+        if (!this.interfaces.includes(json['__interface'])) {
+          this.interfaces.push(json['__interface']);
+        }
+        div.dataset.interface = json['__interface'];
+      } catch(e) {
+        console.log(msg);
+        console.log(e.error);
       }
-      div.dataset.interface = json['__interface'];
     }
 
     // append message
@@ -80,7 +86,6 @@ PPParser.prototype.handleLog = function(text) {
     fragment.appendChild(div);
   }).bind(this));
   this.resultArea.appendChild(fragment);
-  console.log(fragment);
 
   this.interfaces.forEach((function(name) {
     var span = document.createElement('span');
