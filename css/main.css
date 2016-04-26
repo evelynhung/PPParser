@@ -23,3 +23,18 @@ body, input {
   color: red;
   float: left;
 }
+
+.interfacePicker {
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: yellow;
+  display: none;
+}
+.interfacePicker span {
+  width: 300px;
+  display: inline-block;
+}
+.interfacePicker label {
+  margin-right: 10px;
+}
+
