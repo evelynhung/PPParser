@@ -42,7 +42,7 @@ PPParser.prototype.readLog = function(evt) {
 PPParser.prototype.handleLog = function(text) {
   var lines = text.split('\n');
   var fragment = document.createDocumentFragment();
-  lines.forEach((function(line) {
+  lines.forEach((function(line, index) {
     var style = 'unknown';
     var msg = '';
     var div = document.createElement('div');
@@ -85,7 +85,7 @@ PPParser.prototype.handleLog = function(text) {
 
     // append message
     div.classList.add('message', style);
-    div.textContent = msg;
+    div.innerHTML = '<label>' + (index+1) + '</label>' + msg;
     fragment.appendChild(div);
   }).bind(this));
   this.resultArea.appendChild(fragment);

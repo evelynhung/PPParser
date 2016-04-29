@@ -18,6 +18,11 @@ body, input {
   background-color: white;
   border-radius: 5px;
 }
+.message > label {
+  font-size: 80%;
+  color: gray;
+  margin-right: 10px;
+}
 .fromPlugin {
   background-color: #E0FFFF;
   width: 90%;
