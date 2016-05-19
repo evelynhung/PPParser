@@ -49,7 +49,7 @@ PPParser.prototype.handleLog = function(text) {
 
     if (line.startsWith('Not implemented')) {  // highlight this
       msg = line;
-    } else if (line.indexOf('__interface') == -1) {  // special format
+    } else if (line.indexOf('__interface') == -1 && line.indexOf('__callback') == -1) {  // special format
       if (line.indexOf('RPC response') >= 0) {
         style = 'fromBrowser';
         msg = line.substring(line.indexOf('[', 2), line.lastIndexOf(']')+1)
@@ -89,7 +89,7 @@ PPParser.prototype.handleLog = function(text) {
     fragment.appendChild(div);
   }).bind(this));
   this.resultArea.appendChild(fragment);
-
+  this.interfaces.sort();
   this.interfaces.forEach((function(name) {
     var span = document.createElement('span');
     var checkbox = document.createElement('input');
